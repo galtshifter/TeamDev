@@ -1,42 +1,63 @@
 import curses
 
-def main(screen):
+direction = {'up': 65,
+             'down': 66,
+             'left': 67,
+             'right': 68}
 
-    screen.timeout(-1)
+class Field:
+    def __init__(self, height, width):
+        self.height = height
+        self.width = width
 
-    begin_x = 1
-    begin_y = 1
-    height = 20
-    width = 20
+    def render(self, screen, snake):
+        screen.clear
+        screen.addstr(snake.y, snake.x, '#')
 
-    try:
-        key = 'x'
-        screen = curses.newwin(height+2, width+2, begin_x, begin_y)
-        screen.border(0) 
-        cur_x = 1
-        cur_y = 1
-        screen.addstr(cur_x, cur_y, '')   
 
-        while key != ord('\n'):    
-            key = screen.getch()  
-            if key != -1:    
+class Snake:
+    def __init__(self, x, y, direction):
+        self.x = x
+        self.y = y
+        self.direction = direction
 
-                if (key == 68) and (cur_x != 1):
-                    cur_x -= 1
-                elif (key == 67) and (cur_x != width):
-                    cur_x += 1
-                elif (key == 65) and (cur_y != 1):
-                    cur_y -= 1
-                elif (key == 66) and (cur_y != height):
-                    cur_y += 1
-                screen.addstr(cur_y, cur_x, '#')   
-                screen.refresh
-
-    except Exception:
-        print(Exception)
+    def set_direction(self, key):
+        if (self.direction == direction['left']) and (key == direction['right']):
+            return
+        elif (self.direction == direction['right']) and (key == direction['left']):
+            return
+        elif (self.direction == direction['down']) and (key == direction['up']):
+            return
+        elif (self.direction == direction['up']) and (key == direction['down']):
+            return
+        self.direction = direction
     
-    finally:
+    def move(self):
         return
 
+
+def main():
+    try:
+        field = Field(20, 20)
+        snake = Snake(2, 2, direction['right'])
+        screen = curses.newwin(field.height+2, field.width+2, 0, 0)
+        screen.timeout(0)
+        screen.border(0) 
+
+    
+        while True:
+            key = screen.getch()
+            if key != -1:
+                snake.set_direction(key)
+            
+            snake.move
+
+            field.render(screen, snake)
+        
+            screen.sleep(1)
+    finally:
+        curses.endwin()
+        
+
 if __name__ == "__main__":
-     curses.wrapper(main)
+    main()
