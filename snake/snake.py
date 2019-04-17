@@ -18,19 +18,23 @@ class Field:
         screen.addstr(0, 0, '')
 
     def render(self, screen, snake):
-        for i in range(1, self.width):
-            for j in range(1, self.height):
+        for i in range(1, self.width+1):
+            for j in range(1, self.height+1):
                 screen.addstr(j, i, ' ')
         
-        screen.addstr(snake.y, snake.x, '#')
+        screen.addstr(snake.body[0][1], snake.body[0][0], '#')
+        for part in snake.body[1:]:
+            screen.addstr(part[1], part[0], 'o')
         screen.addstr(0, 0, '')
         screen.refresh()
 
 
 class Snake:
     def __init__(self, x, y, direction):
-        self.x = x
-        self.y = y
+        self.body = []
+        self.body.append([x, y])
+        self.body.append([x-1, y])
+        self.body.append([x-2, y])
         self.direction = direction
 
     def set_direction(self, key):
@@ -45,14 +49,22 @@ class Snake:
         self.direction = key
     
     def move(self, field):
-        if (self.direction == curses.KEY_LEFT) and (self.x != 1):
-            self.x -= 1
-        elif (self.direction == curses.KEY_RIGHT) and (self.x != field.width):
-            self.x += 1
-        elif (self.direction == curses.KEY_UP) and (self.y != 1):
-            self.y -= 1
-        elif (self.direction == curses.KEY_DOWN) and (self.y != field.height):
-            self.y += 1
+        dx = 0
+        dy = 0
+        if (self.direction == curses.KEY_LEFT) and (self.body[0][0] != 1):
+            dx = -1
+        elif (self.direction == curses.KEY_RIGHT) and (self.body[0][0] != field.width):
+            dx = 1
+        elif (self.direction == curses.KEY_UP) and (self.body[0][1] != 1):
+            dy = -1
+        elif (self.direction == curses.KEY_DOWN) and (self.body[0][1] != field.height):
+            dy = 1
+        else:
+            return
+        self.body.pop()
+        x = self.body[0][0] + dx
+        y = self.body[0][1] + dy
+        self.body.insert(0, [x, y])
             
 
 
@@ -61,7 +73,7 @@ def main(screen):
     screen.timeout(1)
 
     field = Field(20, 20)
-    snake = Snake(2, 2, curses.KEY_RIGHT)
+    snake = Snake(5, 5, curses.KEY_RIGHT)
 
     field.border_render(screen)
 
