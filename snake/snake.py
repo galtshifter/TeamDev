@@ -40,6 +40,7 @@ class Field:
         # Setting field
         self.clear_field()
 
+        #setting food
         self.cells[self.food[0]][self.food[1]] = 4
 
         # Setting body
@@ -51,30 +52,15 @@ class Field:
 
         # Setting head
         self.cells[snake.body[0][0]][snake.body[0][1]] = 1
-        
-        # add food and full body
-        
-
-    def border_render(self, screen):
-        for i in range(self.width+2):
-            screen.addstr(0, i, '░')
-            screen.addstr(self.height+1, i, '░')
-        for j in range(1, self.height+1):
-            screen.addstr(j, 0, '░')
-            screen.addstr(j, self.width+1, '░')
-        screen.addstr(0, 0, '')
 
 
     def render(self, screen, snake):
         
         self.set_field(snake)
-        
         screen.clear()
-
-        self.border_render(screen)
-
-        for j in range(1, self.height+1):
-            for i in range(1, self.width+1):
+        # self.border_render(screen)
+        for j in range(0, self.height+2):
+            for i in range(0, self.width+2):
                 screen.addstr(j, i, field_dictionary[self.cells[j][i]])
         
         # screen.refresh()
@@ -93,6 +79,14 @@ class Snake:
         self.direction = direction
         self.eaten_food = []
 
+    def is_alive(self, field):
+        if (self.body[0][0] == 0) or (self.body[0][0] == field.height+1) or (self.body[0][1] == 0) or (self.body[0][1] == field.width+1):
+            return False
+        if (self.body[0] in self.body[1:]):
+            return False
+        return True
+
+
     def set_direction(self, key):
         if key == curses.KEY_LEFT and self.direction == curses.KEY_RIGHT:
             return
@@ -107,13 +101,13 @@ class Snake:
     def move(self, field):
         dy = 0
         dx = 0
-        if (self.direction == curses.KEY_UP) and (self.body[0][0] != 1):
+        if (self.direction == curses.KEY_UP):
             dy = -1
-        elif (self.direction == curses.KEY_DOWN) and (self.body[0][0] != field.height):
+        elif (self.direction == curses.KEY_DOWN):
             dy = 1
-        elif (self.direction == curses.KEY_LEFT) and (self.body[0][1] != 1):
+        elif (self.direction == curses.KEY_LEFT):
             dx = -1
-        elif (self.direction == curses.KEY_RIGHT) and (self.body[0][1] != field.width):
+        elif (self.direction == curses.KEY_RIGHT):
             dx = 1
         else:
             return
@@ -144,8 +138,9 @@ def main(screen):
 
     snake = Snake(5, 5, curses.KEY_RIGHT)
     field = Field(20, 20, snake)
+    snake_is_alive = True
 
-    while True:
+    while snake_is_alive:
         key = screen.getch()
 
         if key in directions:
@@ -154,8 +149,17 @@ def main(screen):
         snake.move(field)
 
         field.render(screen, snake)
+
+        if not(snake.is_alive(field)):
+            snake_is_alive = False
         
         time.sleep(.1)
+
+    else:
+        screen.timeout(-1)
+        screen.addstr(0, 0, 'oops, you died')
+        key = screen.getch()
+
 
         
 
