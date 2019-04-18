@@ -19,6 +19,8 @@ class Field:
         self.height = height
         self.width = width
         self.cells = [[0 for i in range(self.width+2)] for j in range(self.height+2)]
+
+        #setting border
         for j in range(self.height+2):
             self.cells[j][0] = -1
             self.cells[j][self.width+1] = -1
@@ -58,17 +60,15 @@ class Field:
         
         self.set_field(snake)
         screen.clear()
-        # self.border_render(screen)
         for j in range(0, self.height+2):
             for i in range(0, self.width+2):
                 screen.addstr(j, i, field_dictionary[self.cells[j][i]])
         screen.addstr(24, 2, 'Your score: ' + str(score))
-        
-        # screen.refresh()
 
 
     def food_gen(self, snake):
         a = [randint(1, self.height), randint(1, self.width)]
+        #checking if generated food hit the body
         while a in snake.body:
             a = [randint(1, self.height), randint(1, self.width)]
         self.food = a
@@ -76,13 +76,15 @@ class Field:
 
 class Snake:
     def __init__(self, y, x, direction):
-        self.body = [[y, x], [y, x-1], [y, x-2], [y-1, x-2]]
+        self.body = [[y, x], [y, x-1], [y, x-2]]
         self.direction = direction
         self.eaten_food = []
 
     def is_alive(self, field):
+        #checking if snake hit the wall
         if (self.body[0][0] == 0) or (self.body[0][0] == field.height+1) or (self.body[0][1] == 0) or (self.body[0][1] == field.width+1):
             return False
+        #checking if snake hit itself
         if (self.body[0] in self.body[1:]):
             return False
         return True
@@ -152,15 +154,16 @@ def main(screen):
             snake.set_direction(key)
         
         snake.move(field)
+
         if if_inc_score(snake):
             score +=1
+            
         field.render(screen, snake, score)
 
         if not(snake.is_alive(field)):
             snake_is_alive = False
         
-        time.sleep(.1)
-
+        time.sleep(.4)
     else:
         screen.timeout(-1)
         screen.addstr(23, 2, 'Oops, you died. Press End to exit the game')
