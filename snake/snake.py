@@ -54,7 +54,7 @@ class Field:
         self.cells[snake.body[0][0]][snake.body[0][1]] = 1
 
 
-    def render(self, screen, snake):
+    def render(self, screen, snake, score):
         
         self.set_field(snake)
         screen.clear()
@@ -62,6 +62,7 @@ class Field:
         for j in range(0, self.height+2):
             for i in range(0, self.width+2):
                 screen.addstr(j, i, field_dictionary[self.cells[j][i]])
+        screen.addstr(24, 2, 'Your score: ' + str(score))
         
         # screen.refresh()
 
@@ -131,6 +132,9 @@ class Snake:
                 # break # can be uncomment if snake will start lagging
             
 
+def if_inc_score(snake):
+    return True if (len(snake.eaten_food) != 0) and (snake.eaten_food[0] == snake.body[0]) else False
+        
 
 def main(screen):
 
@@ -139,6 +143,7 @@ def main(screen):
     snake = Snake(5, 5, curses.KEY_RIGHT)
     field = Field(20, 20, snake)
     snake_is_alive = True
+    score = 0
 
     while snake_is_alive:
         key = screen.getch()
@@ -147,8 +152,9 @@ def main(screen):
             snake.set_direction(key)
         
         snake.move(field)
-
-        field.render(screen, snake)
+        if if_inc_score(snake):
+            score +=1
+        field.render(screen, snake, score)
 
         if not(snake.is_alive(field)):
             snake_is_alive = False
@@ -157,10 +163,9 @@ def main(screen):
 
     else:
         screen.timeout(-1)
-        screen.addstr(0, 0, 'oops, you died')
-        key = screen.getch()
-
-
+        screen.addstr(23, 2, 'Oops, you died. Press End to exit the game')
+        while (screen.getch() != curses.KEY_END):
+            pass
         
 
 if __name__ == "__main__":
