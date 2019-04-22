@@ -1,17 +1,20 @@
+# -*- coding: utf-8 -*-
+
 import curses
 import time
 from random import randint
 
 
+
 directions = [curses.KEY_RIGHT, curses.KEY_LEFT, curses.KEY_UP, curses.KEY_DOWN]
 
 
-field_dictionary = {-1: '░',
+field_dictionary = {-1: '/',
                     0:  ' ',
                     1:  '#',
                     2:  'o',
                     3:  '0',
-                    4:  'ж'}
+                    4:  'w'}
 
 
 class Field:
@@ -78,7 +81,7 @@ class Snake:
     def __init__(self, y, x, direction):
         self.body = [[y, x], [y, x-1], [y, x-2]]
         self.direction = direction
-        self.eaten_food = []
+	self.eaten_food = []
 
     def is_alive(self, field):
         #checking if snake hit the wall
@@ -137,7 +140,7 @@ class Snake:
 def if_inc_score(snake):
     return True if (len(snake.eaten_food) != 0) and (snake.eaten_food[0] == snake.body[0]) else False
         
-
+'''
 def main(screen):
 
     screen.timeout(1)
@@ -173,3 +176,4 @@ def main(screen):
 
 if __name__ == "__main__":
     curses.wrapper(main)
+'''
