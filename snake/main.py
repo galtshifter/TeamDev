@@ -1,5 +1,6 @@
 from genetic import *
 from snake import *
+from neuro import *
 import curses
 
 # n_x -> no. of input units
@@ -19,14 +20,15 @@ def main(screen):
 
 	num_parents_mating = 12
 	for generation in range(num_generations):
-	     file.write('##############        GENERATION ' + str(generation)+ '  ###############\n' )
-    	     fitness = cal_pop_fitness(new_population, screen, file)
-	     file.write('#######  fittest chromosome in gneneration ' + str(generation) +' is having fitness value:  ' + str(np.max(fitness)) + '\n')
-	     parents = select_mating_pool(new_population, fitness, num_parents_mating)
-	     offspring_crossover = crossover(parents, offspring_size=(pop_size[0] - parents.shape[0], num_weights))
-	     offspring_mutation = mutation(offspring_crossover)
-	     new_population[0:parents.shape[0], :] = parents
-	     new_population[parents.shape[0]:, :] = offspring_mutation
+		file.write('##############		GENERATION ' + str(generation)+ '  ###############\n' )
+		fitness = cal_pop_fitness(new_population, screen, file)
+		file.write('#######  fittest chromosome in gneneration ' + str(generation) +' is having fitness value:  ' + str(np.max(fitness)) + '\n')
+		parents = select_mating_pool(new_population, fitness, num_parents_mating)
+		offspring_crossover = crossover(parents, offspring_size=(pop_size[0] - parents.shape[0], num_weights))
+		offspring_mutation = mutation(offspring_crossover)
+		new_population[0:parents.shape[0], :] = parents
+		new_population[parents.shape[0]:, :] = offspring_mutation
 	file.close()
+	
 if __name__ == "__main__":
-    curses.wrapper(main)
+	curses.wrapper(main)
