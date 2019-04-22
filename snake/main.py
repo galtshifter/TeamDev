@@ -9,6 +9,12 @@ def main(screen):
 	num_weights = n_x*n_h + n_h*n_h2 + n_h2*n_y
 
 	pop_size = (sol_per_pop,num_weights)
+	new_population = np.random.choice(np.arange(-1,1,step=0.01),size=pop_size,replace=True)
+	num_generations = 100
+	
+	for generation in range(num_generations):
+	    fitness = cal_pop_fitness(new_population, screen, file)
+	    
 
 if __name__ == "__main__":
     curses.wrapper(main)
