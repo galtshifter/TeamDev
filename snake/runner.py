@@ -91,7 +91,11 @@ def run_game(weights, screen):
 	for _ in range(steps_per_game):
 		current_direction_vector, is_front_blocked, is_left_blocked, is_right_blocked = blocked_directions(snake, snake.body, field)
         angle, snake_direction_vector, apple_direction_vector_normalized, snake_direction_vector_normalized = angle_with_apple(snake.body, field.food)
-            
+        
+		predictions = []
+        predicted_direction = np.argmax(np.array(forward_propagation(np.array([is_left_blocked, is_front_blocked, is_right_blocked, apple_direction_vector_normalized[0],
+                 snake_direction_vector_normalized[0], apple_direction_vector_normalized[1],
+                 snake_direction_vector_normalized[1]]).reshape(-1, 7), weights))) - 1
 		
 		snake.move(field)
         if if_inc_score(snake):
