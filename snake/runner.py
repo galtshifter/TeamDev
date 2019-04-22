@@ -72,6 +72,7 @@ def blocked_directions(snake, snake_position, field):
 
 def run_game(weights, screen):
 	score = 0
+	score_of_died = 0
 
 	field_size = 20
 	field_border = 3
@@ -96,6 +97,27 @@ def run_game(weights, screen):
         predicted_direction = np.argmax(np.array(forward_propagation(np.array([is_left_blocked, is_front_blocked, is_right_blocked, apple_direction_vector_normalized[0],
                  snake_direction_vector_normalized[0], apple_direction_vector_normalized[1],
                  snake_direction_vector_normalized[1]]).reshape(-1, 7), weights))) - 1
+		
+		if predicted_direction == prev_direction:
+                count_same_direction += 1
+        else:
+                count_same_direction = 0
+                prev_direction = predicted_direction
+
+        new_direction = np.array(snake.body[0]) - np.array(snake.body[1])
+        if predicted_direction == -1:
+                new_direction = np.array([new_direction[1], -new_direction[0]])
+        if predicted_direction == 1:
+                new_direction = np.array([-new_direction[1], new_direction[0]])
+
+        button_direction = generate_button_direction(new_direction)
+
+        if snake.is_alive(field):
+                score_of_died += 0
+             
+        else:
+                score_of_died += -150
+		        break
 		
 		snake.move(field)
         if if_inc_score(snake):
