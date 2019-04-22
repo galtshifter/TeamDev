@@ -9,8 +9,7 @@ def cal_pop_fitness(pop, screen, file):
         file.write('fitness value of chromosome '+ str(i) +' :  ' +str(fit) + '\n')
         fitness.append(fit)
     return np.array(fitness)
-	
-
+	 
 def select_mating_pool(pop, fitness, num_parents):
     # Selecting the best individuals in the current generation as parents for producing the offspring of the next generation.
     parents = np.empty((num_parents, pop.shape[1]))
