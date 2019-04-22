@@ -159,6 +159,6 @@ def run_game(weights, screen):
 		else:
 			score2 += 2
 
-	return score1 + score2 + max_score * 500
+	return score, score1 + score2 + max_score * 500
 
 
