@@ -6,6 +6,26 @@ snake_direction = { 0:  curses.KEY_RIGHT,
                     2:  curses.KEY_UP,
                     3:  curses.KEY_DOWN}
 					
+def angle_with_apple(snake_position, apple_position):
+    apple_direction_vector = np.array(apple_position) - np.array(snake_position[0])
+    snake_direction_vector = np.array(snake_position[0]) - np.array(snake_position[1])
+
+    norm_of_apple_direction_vector = np.linalg.norm(apple_direction_vector)
+    norm_of_snake_direction_vector = np.linalg.norm(snake_direction_vector)
+    if norm_of_apple_direction_vector == 0:
+        norm_of_apple_direction_vector = 1
+    if norm_of_snake_direction_vector == 0:
+        norm_of_snake_direction_vector = 1
+
+    apple_direction_vector_normalized = apple_direction_vector / norm_of_apple_direction_vector
+    snake_direction_vector_normalized = snake_direction_vector / norm_of_snake_direction_vector
+    angle = math.atan2(
+        apple_direction_vector_normalized[1] * snake_direction_vector_normalized[0] - apple_direction_vector_normalized[
+            0] * snake_direction_vector_normalized[1],
+        apple_direction_vector_normalized[1] * snake_direction_vector_normalized[1] + apple_direction_vector_normalized[
+            0] * snake_direction_vector_normalized[0]) / math.pi
+    return angle, snake_direction_vector, apple_direction_vector_normalized, snake_direction_vector_normalized
+
 def is_direction_blocked(snake, key_type, field):
     snake.direction = snake_direction[key_type]
     snake.move(field)
@@ -70,7 +90,8 @@ def run_game(weights, screen):
 
 	for _ in range(steps_per_game):
 		current_direction_vector, is_front_blocked, is_left_blocked, is_right_blocked = blocked_directions(snake, snake.body, field)
-        
+        angle, snake_direction_vector, apple_direction_vector_normalized, snake_direction_vector_normalized = angle_with_apple(snake.body, field.food)
+            
 		
 		snake.move(field)
         if if_inc_score(snake):
