@@ -15,4 +15,4 @@ python:
 #   - pip install -r requirements.txt --use-mirrors
 
 # Команда для запуска тестов, в моем случае они запускаются именно так
-script: python tests.py
+script: python snake/tests.py
